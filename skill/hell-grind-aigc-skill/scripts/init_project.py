@@ -16,6 +16,7 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_ROOT = SKILL_ROOT / "assets" / "project-template"
 PROJECT_ID_PATTERN = re.compile(r"^PRJ-[A-Z0-9][A-Z0-9-]{1,61}$")
 ASPECT_RATIO_PATTERN = re.compile(r"^(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)$")
+RESOLUTION_PATTERN = re.compile(r"^(\d+)x(\d+)$")
 
 
 def slugify(value: str) -> str:
@@ -35,6 +36,14 @@ def normalize_aspect_ratio(value: str) -> str:
     return normalized
 
 
+def normalize_resolution(value: str) -> str:
+    normalized = value.strip().lower()
+    match = RESOLUTION_PATTERN.fullmatch(normalized)
+    if not match or any(int(part) <= 0 for part in match.groups()):
+        raise ValueError("resolution must use positive WxH values, for example 1920x1080 or 1080x1920")
+    return normalized
+
+
 def replace_placeholders(root: Path, values: dict[str, str]) -> None:
     for path in sorted(item for item in root.rglob("*") if item.is_file()):
         text = path.read_text(encoding="utf-8")
@@ -43,7 +52,9 @@ def replace_placeholders(root: Path, values: dict[str, str]) -> None:
         path.write_text(text, encoding="utf-8")
 
 
-def initialize_project(name: str, output: Path, project_id: str, aspect_ratio: str) -> Path:
+def initialize_project(
+    name: str, output: Path, project_id: str, aspect_ratio: str, resolution: str
+) -> Path:
     if not TEMPLATE_ROOT.is_dir():
         raise ValueError(f"Project template is missing: {TEMPLATE_ROOT}")
     if not PROJECT_ID_PATTERN.fullmatch(project_id):
@@ -51,6 +62,7 @@ def initialize_project(name: str, output: Path, project_id: str, aspect_ratio: s
     if not name.strip():
         raise ValueError("project name cannot be empty")
     aspect_ratio = normalize_aspect_ratio(aspect_ratio)
+    resolution = normalize_resolution(resolution)
     if output.exists() and (not output.is_dir() or any(output.iterdir())):
         raise ValueError(f"refusing to overwrite non-empty target: {output}")
 
@@ -65,6 +77,7 @@ def initialize_project(name: str, output: Path, project_id: str, aspect_ratio: s
                 "PROJECT_NAME": yaml_string(name.strip()),
                 "CREATED_DATE": date.today().isoformat(),
                 "ASPECT_RATIO": yaml_string(aspect_ratio),
+                "RESOLUTION": yaml_string(resolution),
             },
         )
         if output.exists():
@@ -82,6 +95,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", required=True, type=Path, help="New or empty project directory")
     parser.add_argument("--project-id", help="Stable ID beginning with PRJ-")
     parser.add_argument("--aspect-ratio", default="16:9", help="Delivery aspect ratio")
+    parser.add_argument("--resolution", default="1920x1080", help="Delivery resolution, for example 1080x1920")
     return parser.parse_args()
 
 
@@ -89,7 +103,9 @@ def main() -> int:
     args = parse_args()
     project_id = args.project_id or f"PRJ-{date.today().strftime('%Y%m%d')}-{slugify(args.name)}"
     try:
-        output = initialize_project(args.name, args.output.expanduser().resolve(), project_id, args.aspect_ratio)
+        output = initialize_project(
+            args.name, args.output.expanduser().resolve(), project_id, args.aspect_ratio, args.resolution
+        )
     except (OSError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2

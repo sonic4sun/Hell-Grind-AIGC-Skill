@@ -32,6 +32,7 @@ class BehaviorContractTests(unittest.TestCase):
             "prompt-preservation.md",
             "prompt-quality-rubric.md",
             "prompt-examples.md",
+            "vertical-episodic-series.md",
         }
         skill = (SKILL_ROOT / "SKILL.md").read_text()
         routed = set(re.findall(r"references/([a-z0-9-]+\.md)", skill))

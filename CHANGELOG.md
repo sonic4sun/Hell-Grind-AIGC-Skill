@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.1.0-fork - 2026-09-16
+
+### Added
+
+- `references/vertical-episodic-series.md`：竖屏微短剧"爽剧"专属层——`01_story/episodes.csv` 集数分组、开场/结尾钩子词表、单集情绪节奏契约（压抑→假反转→打脸→钩子）、竖屏构图倾向、F-HOOK-WEAK 失败诊断类别。
+- `init_project.py --resolution`：交付分辨率不再固定 1920x1080，可独立于 `--aspect-ratio` 指定（例如 `--resolution 1080x1920`），随 `RESOLUTION` 占位符写入 `project.yaml`。
+
+### Changed
+
+- SKILL.md 生产管理路由新增指向 `vertical-episodic-series.md` 的条目。
+
+### Notes
+
+- 本次改动均为增量扩展：不修改 `03_scenes/scenes.csv`／`04_shots/shots.csv` 既有表头，`episodes.csv` 不在 `validate_project.py` 必填文件清单内，`--resolution` 有默认值保持向后兼容。全部 40 项既有测试通过（含更新后的路由契约测试）。
+
 ## 2.0.0 - 2026-08-07
 
 ### Added

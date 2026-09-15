@@ -30,6 +30,7 @@ For project setup, tracking, continuity, review, or delivery, read:
 - `references/production-workflow.md`
 - `references/project-schemas.md`
 - `references/project-qa-gates.md` for audit or delivery
+- `references/vertical-episodic-series.md` for a vertical (9:16) multi-episode "爽剧" series — episode grouping, opening/closing hook contracts, per-episode pacing arc, pay-gate marking
 
 ### 提示词创作工作流：图片从零生成 / 图片润色扩写
 
