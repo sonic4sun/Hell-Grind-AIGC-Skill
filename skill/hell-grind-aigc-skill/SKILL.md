@@ -95,7 +95,10 @@ Run the bundled scripts when local file creation is requested:
 python3 scripts/init_project.py --name "Project name" --output /absolute/project/path
 python3 scripts/validate_project.py /absolute/project/path --strict-v2
 python3 scripts/audit_prompt.py /absolute/prompt.md --medium video
+python3 scripts/import_storyboard.py /absolute/project/path /absolute/storyboard.csv
 ```
+
+`import_storyboard.py` seeds scenes, shots and audio cues from a long-script-storyboard / ai-comic-studio storyboard CSV as `planned` rows; it refuses to overwrite existing rows unless `--replace` is given.
 
 The initializer must refuse a non-empty target. The validator must remain read-only. Do not replace these safety behaviors with ad hoc file operations.
 
