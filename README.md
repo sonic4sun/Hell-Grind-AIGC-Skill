@@ -146,6 +146,17 @@ printf '%s' '画面中恰好一人……' | \
 
 审计器检查缺失模块和高置信显式问题，例如静止/运动冲突、多主运镜、时间线越界、引用范围缺失、重复负向约束、平台参数混入和对白视觉化风险。分数只表示结构完整度，不预测生成效果。
 
+### 导入分镜表
+
+把长剧本分镜（long-script-storyboard）或漫画工作室（ai-comic-studio）导出的分镜 CSV（`鏡號,場,段落,影片段,地點,時間,景別,機位／運鏡,光色,畫面,對白／OS／音效,秒,變速`）导入新项目：
+
+```bash
+python3 skill/hell-grind-aigc-skill/scripts/import_storyboard.py \
+  /absolute/project/path /absolute/path/分镜.csv
+```
+
+只写入 `03_scenes/scenes.csv`、`04_shots/shots.csv`、`04_shots/audio-cues.csv`：场次编号统一成 `SC001`、镜头 `SC001-SH001`，画面进 `narrative_goal`、运镜进 `camera_path`，景别/光色/变速/原镜号写进 `notes`，对白与音效拆成声音提示（`dialogue/foley/ambience/music`）。全部以 `planned` 状态导入，之后照常走契约、提示词、生成流程。项目已有场景或镜头时会拒绝覆盖，确定要覆盖加 `--replace`。
+
 ## schema v2 目录
 
 ```text
